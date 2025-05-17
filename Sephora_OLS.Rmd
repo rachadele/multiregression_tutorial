@@ -6,6 +6,8 @@ output:
     number_sections: true
     toc: true
     toc_depth: 4
+bibliography: refs.bib
+
 ---
 
 
@@ -18,7 +20,7 @@ library(scales)
 ```
 
 
-## Introduction
+# Introduction
 
 Multiple Linear Regression is a statistical method used to model the relationship between two or more independent variables and a dependent variable by fitting a linear equation. You are probably familiar with the formulation of a univariate linear regression:
 
@@ -30,7 +32,7 @@ Y = \beta_0 + \beta_1 X_1 + \epsilon
 
 In this primer, we will extend univariate regression to take into account multiple predictor variables.
 
-## Simulating a Multivariate Dataset
+# Simulating a Multivariate Dataset
 
 Yesenia is a Sephora employee who spends most of her shifts matching foundation to customers' skin complexion. This is a time consuming process by hand. Yesenia
 decides to build a statistical model to quickly predict the best foundation shade for any customer based on their complexion, undertone, and the oil content of their skin. Let's imagine she has compiled a **training dataset** of customers, their aformentioned features, and their self-reported perfect foundation match (this will be our response variable). Let's now simulate some data to represent this scenario:
@@ -146,12 +148,12 @@ Therefore:
 
 We solve for coefficients by minimizing this residual, a.k.a. our *loss function*. Once we find our \( \beta \) values, we can use them to predict a response (in this case, a foundation shade) for unseen customers.
 
-## Solving a Multivariate Linear Equation
+# Solving a Multivariate Linear Equation
 
 The procedure for finding the coefficients \( \beta_0, \beta_1, \ldots \beta_n \) to projected our predictors onto a hyperplane is the same as for univariate linear regression, where they are projected onto a line.
 This procedure is known as* **Ordinary Least Squares (OLS)**. 
 
-### The Design Matrix 
+## The Design Matrix 
 
 To solve OLS, we will need to use matrix algebra. Instead of a single predictor vector $x$, we have a matrix of predictor variables $X$ called the **design matrix**. We can simplify all the coefficients \( \beta_1, \beta_2, \dots, \beta_n \) into a vector \( \boldsymbol{\beta} \), and write the model in matrix form:
 
@@ -254,12 +256,12 @@ Any level can be dropped to avoid linear dependency. is known as the **reference
 \]
 
 
-#### Matrix Multiplication
+## Matrix Multiplication
 
-Columns of the design matrix represent the values of our predictor variables. When we multiply the design matrix by our coefficient vector, each predictor vector (column) is scaled by its corresponding coefficient. Columns are then added to obtain fitted values $\hat{Y}$. For an overview of matrix arithmetic, see [1].
+Columns of the design matrix represent the values of our predictor variables. When we multiply the design matrix by our coefficient vector, each predictor vector (column) is scaled by its corresponding coefficient. Columns are then added to obtain fitted values $\hat{Y}$. For an overview of matrix arithmetic, see [@psu_matrix].
 
 
-#### The Normal Equation
+## The Normal Equation
 
 As previously mentioned, we want to minimize:
 
@@ -310,7 +312,7 @@ Some important terms:
 3. Linear Independence - columns of \( X \) must be linearly independent so \( X^T X \) is invertible. This is why we must drop `skin_typeCombination` from our design matrix $X$.
 
 
-### Geometric Proof
+## Geometric Proof
 
 How do we know that the orthogonal projection of \( Y \) onto the column space of \( X \) is the **unique** solution that minimizes the **norm** of the residual vector? Let's visualize the problem in 2 dimensions:
 
@@ -319,7 +321,7 @@ How do we know that the orthogonal projection of \( Y \) onto the column space o
 In fact, the **Pythagorean Theorem** tells us that the shortest distance between two non-parallel vectors $y$ and $X^T\beta$ is achieved by the orthogonal (perpendicular) projection of $y$ onto the plane where $X^T\beta$ lies. This minimizes the residual vector $\epsilon$, forming a right triangle.
 
 
-### Visualizing Model Fits
+# Visualizing Model Fits
 
 We have already implemented the OLS solution using the `lm()` function and a desing matrix specific by `foundation_shade ~ skin_complexion + undertone + skin_type`. We can now visualize our model fits and residuals for training data:
 
@@ -408,7 +410,7 @@ plot_fits(df, model, type_colors)
 Yesenia sees from this visualization that foundation shade can be represented as a plane defined by customer's skin complexion, undertone, and skin type. The scalar value associated with foundation incorporates information from these all of these dimensions.
 Lines from our data points to the plane represent residuals between the model fit and true foundation shade.
  
-#### Understanding Model Fits
+# Understanding Model Fits
 
 Let's dive deeper into what our model is telling us about the effect of each predictor:
 ```{r, coefficients}
@@ -416,7 +418,7 @@ summary(model)
 ```
 *What is each of these metrics telling us?*
 
-##### Coefficients Table
+## Coefficients Table
 
 - **Estimate** (\(\hat{\beta}_j\))  
   The estimated effect of predictor \(X_j\) on the response variable. Represents the expected change in the outcome for a one-unit increase in \(X_j\), holding all else constant.
@@ -433,7 +435,7 @@ summary(model)
 - **Pr(>|t|)**  
   The p-value: probability of observing such a t-statistic (or more extreme) if the null hypothesis \(H_0\) is true. Small values (e.g. \(< 0.05\)) suggest the predictor is statistically significant.
 
-##### Model Fit Statistics
+## Model Fit Statistics
 
 To understand the model fit statistics, we need to know the formulations of **Sum of Squares (SS)**:
 
@@ -481,13 +483,13 @@ These define the following model fit statistics:
   A high F and low p-value suggest that at least one predictor has a significant effect.
   
 
-#### Deliverible
+### Deliverible
 
 Briefly summarize what each coefficient, p-value, and model fit statistic is telling us about the predictive power of the model.
 
 > respond
 
-### Categorical Predictors
+## Categorical Predictors
 
 Yesenia notices that there are three hyperplanes, one for each level of `skin_type`. To understand why we see this, let's solve for one $\hat{y}$ on the hyperplane $Y$:
 for each value of`skin_type`:
@@ -519,7 +521,7 @@ Then, solving for each level of `skin_type`:
 Since categorical variables are encoded by either 1 or 0, they can only change the intercept $\beta_0$, not the slope of the plane $\beta_1X_1  + \beta_2X_2$. 
 
 
-#### Deliverable
+### Deliverable
 
 Look at the coefficients for the three categorical predictors in our model fit (hint: one is the intercept). How do these relate to the 3D plot of our fitted values?
 
@@ -533,7 +535,7 @@ Explain how this relates to the significance codes for the coefficients:
 
 > respond
 
-#### Interaction terms
+# Interaction terms
 
 Let's now imagine that a customer's skin type has an effect on the relationship between complexion, undertone, and the resulting foundation shade. We can simulate some new data to model this scenario:
 
@@ -581,7 +583,7 @@ interaction_model <- lm(foundation_shade ~ skin_complexion + skin_type * underto
 summary(interaction_model)
 ```
 
-#### Deliverable
+## Deliverable
 
 Which of these coefficients are **interaction terms**?
 
@@ -600,14 +602,14 @@ plot_fits(df = interaction_df, model = interaction_model, type_colors = type_col
 ```
 
 
-#### Deliverable
+## Deliverable
 
 Which skin type has the largest interaction effect with undertone? What color is it on the plot?
 
 > respond
 
 
-## Assumptions of Linear Models
+# Assumptions of Linear Models
 
 Let's imagine Yesenia's homegirl Ashley Marie visits Sephora to purchase a new shade of foundation for her birthday. Little does Ashley Marie know, Yesenia caught Sevanna sliding into Yesenia's baby daddy DMs. Yesenia decides to sabotage Ashley Marie's birthday makeup by giving her the wrong foundation match. However, she just put in a PTO request for a girl's trip to Tulum. How can Yesenia get her revenge without getting her PTO denied....or worse? She decides to violate the base assumptions of linear regression so that her model will pick the wrong foundation shade for this 304.
 
@@ -712,10 +714,10 @@ par(mfrow = c(2, 2))
 plot(model)
 ```
 
-For more information on diagnostics plots, see [2]. For an explanation of leverage and Cook's Distance, see [3].
+For more information on diagnostics plots, see [@uva_diagnostics]. For an explanation of leverage and Cook's Distance, see  [@stack_hatmatrix].
 
 
-### Bonus - Continuous Interactions
+# Bonus - Continuous Interactions
 
 Let's simulate an interaction between two continuous variables (complexion and undertone):
 
@@ -758,9 +760,4 @@ The term \(\text{skin_complexion} \times \text{undertone}\) introduces **nonline
 Visually, this looks like a **twist** or **warping** in the fitted surface—a hallmark of interaction between two continuous variables in a linear model.
 
 
-## References
-
-1. https://online.stat.psu.edu/statprogram/reviews/matrix-algebra/arithmetic
-2. https://library.virginia.edu/data/articles/diagnostic-plots
-3. https://stats.stackexchange.com/questions/208242/hat-matrix-and-leverages-in-classical-multiple-regression
-
+# References
