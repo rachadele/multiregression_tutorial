@@ -430,7 +430,7 @@ summary(model)
   \[
   t = \frac{\hat{\beta}_j}{\text{SE}(\hat{\beta}_j)}
   \]  
-  Tests the null hypothesis that the coefficient for parameter $\Beta$ is 0 \(H_0: \beta_j = 0\).
+   \(H_0: \beta_j = 0\) represents the null hypothesis that the coefficient for parameter $\beta$ is 0. The a large T value rejects \(H_0: \beta_j = 0\), indicating the parameter has significant effect on the response.
 
 - **Pr(>|t|)**  
   The p-value: probability of observing such a t-statistic (or more extreme) if the null hypothesis \(H_0\) is true. Small values (e.g. \(< 0.05\)) suggest the predictor is statistically significant.
@@ -485,7 +485,7 @@ These define the following model fit statistics:
 
 ### Deliverible
 
-Briefly summarize what each coefficient, p-value, and model fit statistic is telling us about the predictive power of the model.
+Briefly summarize what each coefficient, p-value, and model fit statistic is telling us about the predictive power of Yesenia's model.
 
 > respond
 
@@ -761,3 +761,5 @@ Visually, this looks like a **twist** or **warping** in the fitted surface—a h
 
 
 # References
+
+
