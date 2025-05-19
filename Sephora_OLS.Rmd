@@ -28,7 +28,14 @@ Multiple Linear Regression is a statistical method used to model the relationshi
 Y = \beta_0 + \beta_1 X_1 + \epsilon
 \]
 
+Where:
+
+1. \( Y \) is the dependent variable (also known as the **response**)
+2. \( X_1, X_2, \dots, X_n \) are the **predictor** variables aka **features**
+3. \( \beta_0 \) is the **intercept**
+4. \( \beta_1\) is the the **coefficients*
 5. \( \epsilon \) is the **error** term, also known as a **residual**
+
 
 In this primer, we will extend univariate regression to take into account multiple predictor variables.
 
@@ -40,7 +47,7 @@ decides to build a statistical model to quickly predict the best foundation shad
 
 ```{r, simulate}
 set.seed(123)
-n <- 30 # we're sampling from 100 Sephora customers
+n <- 30 # we're sampling from 30 Sephora customers
 
 # Simulate training data
 skin_complexion <- rnorm(n, mean = 50, sd = 5)  # Complexion ~ N(50, 25)
@@ -115,13 +122,8 @@ In a multiple linear regression, we assume that the response variable lies appro
 \[
 Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \dots + \beta_n X_n + \epsilon
 \]
-Where:
 
-1. \( Y \) is the dependent variable (also known as the **response**)
-2. \( X_1, X_2, \dots, X_n \) are the **predictor** variables aka **features**
-3. \( \beta_0 \) is the **intercept**
-4. \( \beta_1, \beta_2, \dots, \beta_n \) are the **coefficients**
-5. \( \epsilon \) is the **error** term, also known as a **residual**
+Where \( \beta_1, \beta_2, \dots, \beta_n \) are the **coefficients** which define this hyperplane.
 
 When we fit a linear model, we solve for *estimates* the coefficients \( \beta_1, \beta_2, \dots, \beta_n \). Their linear combination gives us the predicted or *fitted* value of the response variable. Because these are estimated from the sample $n$, they are represented using a **hat**, \( \hat{} \) to distinguish them from the true population statistics.
 
@@ -539,18 +541,11 @@ Explain how this relates to the significance codes for the coefficients:
 
 Let's now imagine that a customer's skin type has an effect on the relationship between complexion, undertone, and the resulting foundation shade. We can simulate some new data to model this scenario:
 
+## Simulating interactions
 
 
 ```{r, simulate_interactions}
-set.seed(123)
-n <- 30 # we're sampling from 100 Sephora customers
-
-# Simulate training data
-skin_complexion <- rnorm(n, mean = 50, sd = 5)  # Complexion ~ N(50, 25)
-skin_type <- factor(sample(c("Oily", "Dry", "Combination"), n, replace = TRUE))
-undertone <- rnorm(n, mean = 0, sd = 1)  # Undertone ~ N(0,1)
-
-# Each categorical may have a different coefficient
+# Main effects
 skin_type_effect <- c(Oily = -5, Combination = 0, Dry = 20)
 
 # Simulate foundation shade with interaction effect between undertone and skin_type
@@ -570,29 +565,33 @@ interaction_df <- data.frame(
   undertone,
   foundation_shade
 )
-
-head(interaction_df)
 ```
 
 ```{r, model_interaction}
 
 # Fit the linear model with one interaction term
+# we can add both the main effects of skin type and undertone as well as their interaction using the *
+# this is equivalent to writing skin complextion + skin type + undertone + skin_type:undertone
 interaction_model <- lm(foundation_shade ~ skin_complexion + skin_type * undertone, data = interaction_df)
 
 # View the summary of the model
 summary(interaction_model)
 ```
 
-## Deliverable
 
-Which of these coefficients are **interaction terms**?
+### Deliverable
 
+Which of these coefficients are **interaction terms**? Which are the **main effects** (non-interaction terms)? 
 > answer
 
-Why did we include these terms? Would we know which interaction terms to include in real life?
+Print the first 5 columns of the design matrix for this model using the `model.matrix` function. Look at observation for customer 1. Can you write the the linear equation for this observation in matrix notation using the values of $X$ you see in the design matrix?
 
-> answer
+```{r, answerbonus}
+# your answer here
+```
+## Visualizing Interaction Effects 
 
+Let's plot the interaction model fit:
 
 ```{r}
 # plot interactive model
@@ -602,11 +601,16 @@ plot_fits(df = interaction_df, model = interaction_model, type_colors = type_col
 ```
 
 
-## Deliverable
+### Deliverable
 
 Which skin type has the largest interaction effect with undertone? What color is it on the plot?
 
 > respond
+
+*Challenge* Why did we include an interaction between skin type and undertone? Would we know which interaction terms to include in real life?
+
+> answer
+
 
 
 # Assumptions of Linear Models
@@ -658,14 +662,14 @@ foundation_shade <- 0.5 * skin_complexion +
 
 
 # Data frame
-df <- data.frame(
+bad_df <- data.frame(
   foundation_shade,
   skin_complexion,
   skin_type,
   undertone
 )
 
-p <- plot_ly(df,
+p <- plot_ly(bad_df,
         x = ~skin_complexion,
         y = ~undertone,
         z = ~foundation_shade,
@@ -688,7 +692,7 @@ Yesenia then re-builds her model with the bad training data.
 
 ```{r}
 # Fit a linear model (ignoring the known nonlinear and heteroscedastic structure)
-model_violation <- lm(foundation_shade ~ skin_complexion + skin_type + undertone, data = df)
+model_violation <- lm(foundation_shade ~ skin_complexion + skin_type + undertone, data = bad_df)
 # Summary of the model
 summary(model_violation)
 ```
@@ -723,10 +727,16 @@ Let's simulate an interaction between two continuous variables (complexion and u
 
 ```{r, continuous interaction}
 
-interaction_strength <- 0.4  # strength of the interaction
+#go back to our oriiginal data
+# we don't want to use the bad data
+
+skin_complexion <- df$skin_complexion
+undertone <- df$undertone
+skin_type <- df$skin_type
+
+interaction_strength <- 0.5  # strength of the interaction
 # Simulate foundation shade with interaction between complexion and undertone
-foundation_shade <- 0.5 * skin_complexion + 
-                    3 * undertone + 
+foundation_shade <- 0.5 * skin_complexion + 3 * undertone + 
                     interaction_strength * skin_complexion * undertone +
                     skin_type_effect[as.character(skin_type)] +
                     rnorm(n, sd = 2)  # error
@@ -752,14 +762,16 @@ This causes a **curved manifold** in the 3D predictor space because of the **mul
 \text{foundation_shade} = \beta_0 + (\beta_1 \cdot \text{skin_complexion}) + (\beta_2 \cdot \text{undertone}) + \beta_3 \cdot (\text{skin_complexion} \times \text{undertone})
 \]
 
-The term \(\text{skin_complexion} \times \text{undertone}\) introduces **nonlinearity** in how the predictors influence the response. In 3D:
+With interaction, the product term bends the surface into a saddle or curved manifold, because the effect of complexion depends on undertone and vice versa. Visually, this looks like a twist or warping in the fitted surface—a hallmark of interaction between two continuous variables in a linear model.
 
-- Without interaction, the surface formed by the regression model would be a **plane**—flat in all directions.
-- With interaction, the product term bends the surface into a **saddle** or **curved manifold**, because the effect of complexion depends on undertone and vice versa.
+## Deliverable
 
-Visually, this looks like a **twist** or **warping** in the fitted surface—a hallmark of interaction between two continuous variables in a linear model.
+Print the design matrix for the continuous interaction model using the `model.matrix` function. 
 
-
+```{r, answer}
+model.matrix(interaction_model2) %>% head()
+```
+Write out the linear equation for  observation 1 
 # References
 
 
