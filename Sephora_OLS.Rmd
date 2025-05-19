@@ -766,12 +766,12 @@ With interaction, the product term bends the surface into a saddle or curved man
 
 ## Deliverable
 
-Print the design matrix for the continuous interaction model using the `model.matrix` function. 
+Print the design matrix for the continuous interaction model using the `model.matrix` function. Write out the linear equation for observations 1 and 2. Can you see why the hyperplane is curving?
 
 ```{r, answer}
-model.matrix(interaction_model2) %>% head()
+
 ```
-Write out the linear equation for  observation 1 
+
 # References
 
 
