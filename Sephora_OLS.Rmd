@@ -480,8 +480,12 @@ These define the following model fit statistics:
 - **F-statistic**  
   Tests whether the model explains more variance than a model with no predictors:
   \[
-  F = \frac{\text{MS}_{\text{reg}}}{\text{MS}_{\text{res}}}
+  F = \frac{ \left( \frac{R^2}{k} \right) }{ \left( \frac{1 - R^2}{n - k - 1} \right) }
   \]  
+  Where:
+- \( k \): Number of predictor variables  
+- \( n \): Number of observations  
+
   A high F and low p-value suggest that at least one predictor has a significant effect.
   
 
