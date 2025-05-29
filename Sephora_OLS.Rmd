@@ -588,7 +588,7 @@ summary(interaction_model)
 Which of these coefficients are **interaction terms**? Which are the **main effects** (non-interaction terms)? 
 > answer
 
-Print the first 5 columns of the design matrix for this model using the `model.matrix` function. Look at observation for customer 1. Can you write the the linear equation for this observation in matrix notation using the values of $X$ you see in the design matrix?
+Print the first 5 rows of the design matrix for this model using the `model.matrix` function. Look at observation for customer 1. Can you write the linear equation for this observation in matrix notation using the values of $X$ you see in the design matrix?
 
 ```{r, answerbonus}
 # your answer here
@@ -763,8 +763,14 @@ plot_fits(df=sim_df, model=interaction_model2, type_colors = type_colors)
 This causes a **curved manifold** in the 3D predictor space because of the **multiplicative interaction term**:
 
 \[
-\text{foundation_shade} = \beta_0 + (\beta_1 \cdot \text{skin_complexion}) + (\beta_2 \cdot \text{undertone}) + \beta_3 \cdot (\text{skin_complexion} \times \text{undertone})
+\text{foundation_shade} = \beta_0 
++ (\beta_1 \cdot \text{skin_complexion}) 
++ (\beta_2 \cdot \text{undertone}) 
++ (\beta_3 \cdot \text{skin_typeDry})
++ (\beta_4 \cdot \text{skin_typeOily})
++ (\beta_5 \cdot \text{skin_complexion} \times \text{undertone}) 
 \]
+
 
 With interaction, the product term bends the surface into a saddle or curved manifold, because the effect of complexion depends on undertone and vice versa. Visually, this looks like a twist or warping in the fitted surface—a hallmark of interaction between two continuous variables in a linear model.
 
@@ -773,7 +779,7 @@ With interaction, the product term bends the surface into a saddle or curved man
 Print the design matrix for the continuous interaction model using the `model.matrix` function. Write out the linear equation for observations 1 and 2. Can you see why the hyperplane is curving?
 
 ```{r, answer}
-
+# your answer here
 ```
 
 # References
