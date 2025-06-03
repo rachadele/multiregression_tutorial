@@ -593,6 +593,44 @@ Print the first 5 rows of the design matrix for this model using the `model.matr
 ```{r, answerbonus}
 # your answer here
 ```
+## Solving for Interaction Effects
+
+Let's say Yesenia wants to determine whether undertone has a different effect on foundation shade for people with oily skin than for people with dry skin and combination skin. She can test this in R using:
+
+```{r}
+# Fit a linear model including interaction between skin_type and undertone
+interaction_model <- lm(foundation_shade ~ skin_complexion + skin_type * undertone, data = interaction_df)
+
+# View the summary of the model
+summary(interaction_model)
+```
+
+Under the hood, we are solving for the coefficients `skin_typeDry:undertone` and `skin_typeOily:undertone`, represented by vectors from the design matrix.
+
+
+- The coefficient `skin_typeDry:undertone` is associated with the vector:  
+  \[
+  \mathbf{x}_{\text{Dry:undertone}} = [0, 0, 0, 0, 0, 1, 0]
+  \]
+
+- The coefficient `skin_typeOily:undertone` is associated with the vector:  
+  \[
+  \mathbf{x}_{\text{Oily:undertone}} = [0, 0, 0, 0, 0, 0, 1]
+  \]
+
+Using the design matrix to solve the system of equations, these coefficients correspond to the **difference in slopes** of undertone between each skin type and the reference (combination skin):
+
+\[
+\beta_{\text{Dry:undertone}} = \left( \frac{\partial\, \hat{Y}}{\partial\, \text{undertone}} \right)_{\text{Dry}} - \left( \frac{\partial\, \hat{Y}}{\partial\, \text{undertone}} \right)_{\text{Combo}}
+\]
+
+\[
+\beta_{\text{Oily:undertone}} = \left( \frac{\partial\, \hat{Y}}{\partial\, \text{undertone}} \right)_{\text{Oily}} - \left( \frac{\partial\, \hat{Y}}{\partial\, \text{undertone}} \right)_{\text{Combo}}
+\]
+
+These coefficients tell us whether the effect of undertone on foundation shade is **stronger or weaker** for Dry or Oily skin compared to Combination skin.
+
+
 ## Visualizing Interaction Effects 
 
 Let's plot the interaction model fit:
@@ -611,10 +649,12 @@ Which skin type has the largest interaction effect with undertone? What color is
 
 > respond
 
-*Challenge* Why did we include an interaction between skin type and undertone? Would we know which interaction terms to include in real life?
+*Challenge* What if we wanted to test if the interaction effect of skin type and undertone is statistically significant between oily and dry skin, instead of compared to the baseline? Look up the documentation for `linearHypothesis` from the **car** package. Write how you would test this hypothesis in R:
 
-> answer
 
+```{r}
+# your answer here
+```
 
 
 # Assumptions of Linear Models
